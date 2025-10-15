@@ -46,3 +46,78 @@ Manual organization is **time-consuming** and **error-prone**.
 | **Deployment (planned)** | Docker + Render / Railway / AWS |
 
 ---
+
+## 📂 Project Structure
+```python 
+wizai/
+├── backend/
+│ └── app/
+│ ├── main.py
+│ ├── models/
+│ ├── routers/
+│ ├── schemas/
+│ ├── core/
+│ └── utils/
+├── venv/
+├── .env.example
+├── .gitignore
+└── README.md
+```
+
+---
+
+### ⚙️ Setup Instructions
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/<your-username>/Wiz-ai.git
+cd Wiz-ai
+```
+### 2. Create and Activate Virtual Environment
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the Application
+```bash
+uvicorn backend.app.main:app --reload
+```
+- Visit http://127.0.0.1:8000 to see your API running.
+
+---
+## Roadmap
+
+- Set up database and ORM models
+
+- Add authentication and JWT tokens
+
+- Integrate Google Calendar API
+
+- Add OCR for document extraction
+
+- Create multi-agent orchestration system
+
+- Deploy via Docker + CI/CD
+
+## 🧍‍♀️ Author
+
+**Sharon Kitavi**  
+*Data Scientist · Community & Innovation Leader · Cofounder — Building Creative Solutions*
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sharonkitavi)  
+
+---
+
+## 🪄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+> *“Intelligence is not just answering questions — it’s anticipating needs.”* ✨
