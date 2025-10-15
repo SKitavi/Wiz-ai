@@ -1,14 +1,12 @@
-# WizAI
-
-# 🧠 WizAI — Intelligent Academic Assistant
+# 🧠 WizAI: Intelligent Academic Assistant
 
 > **WizAI** is an intelligent backend system that goes beyond ChatGPT — designed to help students *organize, plan, and automate* their academic life through intelligent agents and seamless integrations.
 
 ---
 
-## 📖 Project Overview
+## Project Overview
 
-### 🎯 Vision
+### Vision
 WizAI is an intelligent backend system that goes beyond ChatGPT by actively organizing student life through:
 
 - **📚 Portal Integration** — Auto-fetches assignments and deadlines from school portals  
