@@ -1,0 +1,61 @@
+# ---------------------------
+# 🧠 WizAI Project .gitattributes
+# ---------------------------
+
+# --- Default settings ---
+# Normalize all text files to LF (Linux/Mac style)
+* text=auto eol=lf
+
+# --- Language-specific handling ---
+*.py text diff=python
+*.js text diff=javascript
+*.ts text diff=typescript
+*.html text diff=html
+*.css text diff=css
+*.json text diff=json
+*.yml text diff=yaml
+*.yaml text diff=yaml
+*.md text diff=markdown
+*.sh text eol=lf
+
+# --- Documentation ---
+docs/** text
+*.md text
+*.rst text
+
+# --- Notebooks ---
+*.ipynb text
+*.csv text
+*.tsv text
+
+# --- Binary / media files ---
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.mp4 binary
+*.mp3 binary
+*.zip binary
+*.tar binary
+*.gz binary
+*.db binary
+*.pkl binary
+
+# --- Environment & credentials ---
+.env binary
+*.pem binary
+*.crt binary
+*.key binary
+
+# --- OS specific ---
+.DS_Store binary
+Thumbs.db binary
+
+# --- GitHub linguist tweaks ---
+# Ensure notebooks and docs don't skew language stats
+docs/* linguist-documentation
+*.md linguist-documentation
+*.ipynb linguist-documentation
+
