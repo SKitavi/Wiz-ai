@@ -15,4 +15,4 @@ langchain-community
 langchain-openai
 google-generativeai
 openai
-aiosqlite
+asyncpg
