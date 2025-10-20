@@ -8,3 +8,11 @@ python-dotenv
 python-jose
 passlib[bcrypt]
 loguru
+mcp
+langchain
+langchain-core
+langchain-community
+langchain-openai
+google-generativeai
+openai
+aiosqlite
