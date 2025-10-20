@@ -46,8 +46,7 @@ def get_db():
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker as async_sessionmaker
 
-# For async operations, use asyncpg driver
-# Change postgresql:// to postgresql+asyncpg://
+# For async operations, use asyncpg driver for PostgreSQL
 async_database_url = settings.DATABASE_URL.replace(
     "postgresql://", 
     "postgresql+asyncpg://"
