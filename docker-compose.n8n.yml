@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: wizai-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"  # n8n will be accessible at http://localhost:5678
+    environment:
+      # Basic Configuration
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      
+      # Timezone
+      - GENERIC_TIMEZONE=Africa/Nairobi
+      - TZ=Africa/Nairobi
+      
+      # Authentication (IMPORTANT: Change these!)
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=wizai2025secure
+      
+      # Execution
+      - EXECUTIONS_PROCESS=main
+      - EXECUTIONS_MODE=regular
+      
+      # Webhook URL (for external services to reach n8n)
+      - WEBHOOK_URL=http://localhost:5678/
+      
+      # Database (using SQLite by default, can switch to PostgreSQL)
+      - DB_TYPE=sqlite
+      
+      # Logging
+      - N8N_LOG_LEVEL=info
+      
+      # Editor
+      - N8N_EDITOR_BASE_URL=http://localhost:5678
+      
+    volumes:
+      # Persist n8n data
+      - ./n8n_data:/home/node/.n8n
+      
+      # Mount workflows directory for easy export/import
+      - ./workflows/n8n_workflows:/workflows
+    
+    networks:
+      - wizai-network
+
+networks:
+  wizai-network:
+    driver: bridge
+
+# Optional: Add PostgreSQL for n8n if you want (comment out DB_TYPE=sqlite above)
+# postgres-n8n:
+#   image: postgres:14-alpine
+#   container_name: wizai-n8n-db
+#   restart: unless-stopped
+#   environment:
+#     - POSTGRES_USER=n8n
+#     - POSTGRES_PASSWORD=n8n_password
+#     - POSTGRES_DB=n8n
+#   volumes:
+#     - n8n_postgres_data:/var/lib/postgresql/data
+#   networks:
+#     - wizai-network
+#
+# volumes:
+#   n8n_postgres_data:
