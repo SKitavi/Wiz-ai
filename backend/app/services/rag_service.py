@@ -1,5 +1,4 @@
 import chromadb
-from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
 from typing import List, Dict, Any, Optional
 from loguru import logger
@@ -7,11 +6,8 @@ from datetime import datetime
 
 class RAGService:
     def __init__(self, persist_directory: str = "./chroma_db"):
-        # Initialize ChromaDB client
-        self.client = chromadb.Client(Settings(
-            chroma_db_impl="duckdb+parquet",
-            persist_directory=persist_directory
-        ))
+        # Initialize ChromaDB client (new API)
+        self.client = chromadb.PersistentClient(path=persist_directory)
         
         # Initialize embedding model
         self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
