@@ -32,6 +32,9 @@ Manual organization is **time-consuming** and **error-prone**.
 - Students who want **AI that acts**, not just answers — a productivity system that *does the work* behind the scenes  
 
 ---
+## 🚀 Live Demo
+- **Hosted on Streamlit Cloud**: https://wizai-version1.streamlit.app/
+
 
 ## 🏗️ Tech Stack
 
