@@ -4,16 +4,16 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 from typing import Optional, Dict, Any
 
-from app.database import get_db
-from app.models.user import User
-from app.schemas.auth import (
+from backend.app.database import get_db
+from backend.app.models.user import User
+from backend.app.schemas.auth import (
     UserRegister,
     UserLogin,
     Token,
     UserResponse,
     PasswordChange
 )
-from app.utils.auth import (
+from backend.app.utils.auth import (
     get_password_hash,
     authenticate_user,
     create_access_token,
@@ -21,7 +21,7 @@ from app.utils.auth import (
     get_current_active_user,
     validate_password_strength
 )
-from app.config import settings
+from backend.app.config import settings
 import logging
 
 logger = logging.getLogger(__name__)
@@ -184,7 +184,7 @@ async def change_password(
     """
     Change user password
     """
-    from app.utils.auth import verify_password, get_password_hash
+    from backend.app.utils.auth import verify_password, get_password_hash
     
     # Verify old password
     if not verify_password(password_data.old_password, current_user.hashed_password):
