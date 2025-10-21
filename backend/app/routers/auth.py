@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
+from typing import Optional, Dict, Any
 
 from app.database import get_db
 from app.models.user import User
@@ -21,6 +22,9 @@ from app.utils.auth import (
     validate_password_strength
 )
 from app.config import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 

@@ -1,8 +1,8 @@
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.services.ocr_service import OCRService
-from app.services.llm_service import LLMService
+from app.services.llm_service import LLMService, ModelProvider
 from app.schemas.document import DocumentResponse
-import aiofiles
+import aiofiles  # pyright: ignore[reportMissingModuleSource]
 from pathlib import Path
 import uuid
 
@@ -26,7 +26,7 @@ async def upload_document(file: UploadFile = File(...)):
     async with aiofiles.open(file_path, 'wb') as f:
         content = await file.read()
         await f.write(content)
- # Extract text based on file type
+    # Extract text based on file type
     try:
         if file.content_type == "application/pdf":
             text = ocr_service.extract_from_pdf(str(file_path))
