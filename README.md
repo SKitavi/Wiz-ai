@@ -22,19 +22,50 @@ WizAI is an intelligent backend system that goes beyond ChatGPT by actively orga
 Students struggle with fragmented information across multiple platforms (school portals, email, calendar, and documents).  
 Manual organization is **time-consuming** and **error-prone**.  
 
-**WizAI** solves this by creating an intelligent backend that automatically aggregates, processes, and organizes academic life through **AI-powered agents and automation**.
-
----
-
-## 👥 Target Users
-
-- College and university students managing multiple courses, assignments, and deadlines  
-- Students who want **AI that acts**, not just answers — a productivity system that *does the work* behind the scenes  
+**WizAI** solves this by creating an intelligent backend that automatically aggregates, processes, and organizes academic life through **AI-powered agents and automation**.  
 
 ---
 ## 🚀 Live Demo
 - **Hosted on Streamlit Cloud**: https://wizai-version1.streamlit.app/
 
+---
+
+## 📸 Screenshots & Workflows
+
+### 🖥️ Application Screens
+
+<p align="center">
+  <img src="./assets/homepage.png" alt="WizAI Homepage" width="800"/>
+  <br/>
+  <em>WizAI Home — Dashboard Overview</em>
+</p>
+
+<p align="center">
+  <img src="./assets/task_manager.png" alt="Tasks Page" width="800"/>
+  <br/>
+  <em>Task Manager</em>
+</p>
+
+---
+
+### ⚙️ n8n Workflows
+<p align="center">
+  <img src="./assets/daily_schedule_generation.png" alt="n8n Workflow - Generate daily schedule" width="800"/>
+  <br/>
+  <em>n8n Workflow 1 - Daily schedule generation </em>
+</p>
+
+<p align="center">
+  <img src="./assets/deadline_reminder.png" alt="n8n Workflow - Deadline reminder" width="800"/>
+  <br/>
+  <em>n8n Workflow 2 — Deadline reminders</em>
+</p>
+
+<p align="center">
+  <img src="./assets/new_task_notification.png" alt="n8n Workflow - New task notification" width="800"/>
+  <br/>
+  <em>n8n Workflow 3 — New task notifications</em>
+</p>
 
 ## 🏗️ Tech Stack
 
@@ -108,6 +139,10 @@ streamlit run frontend/streamlit_app.py
 - Backend API: http://localhost:8000
 - API Docs: http://localhost:8000/docs
 
+## 📝 Future Enhancements
+- Document OCR for automatic task extraction
+- Google Calendar integration
+- n8n workflow automation
 
 ## 🧍‍♀️ Author
 
