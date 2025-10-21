@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from app.config import settings
+from backend.app.config import settings
 from loguru import logger
 
 # Create database engine
@@ -47,13 +47,9 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker as async_sessionmaker
 
 # For async operations, use asyncpg driver for PostgreSQL
-async_database_url = settings.DATABASE_URL.replace(
-    "postgresql://", 
-    "postgresql+asyncpg://"
-)
 
 async_engine = create_async_engine(
-    async_database_url,
+    settings.DATABASE_URL,
     pool_pre_ping=True,
     pool_size=10,
     max_overflow=20,
@@ -103,8 +99,9 @@ def init_db():
 def check_db_connection():
     """Check if database connection is working"""
     try:
+        from sqlalchemy import text
         db = SessionLocal()
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         db.close()
         logger.info("✅ Database connection successful")
         return True

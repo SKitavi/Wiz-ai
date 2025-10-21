@@ -84,26 +84,27 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Run the Application
+### 4. Running the Application
+
+### Start Backend:
 ```bash
-uvicorn backend.app.main:app --reload
+cd backend
+source ../venv/bin/activate
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
-- Visit http://127.0.0.1:8000 to see your API running.
 
----
-## Roadmap
+### Start Frontend (in separate terminal):
+```bash
+cd wiz-ai
+source venv/bin/activate
+streamlit run frontend/streamlit_app.py
+```
 
-- Set up database and ORM models
+### Access the Application:
+- Frontend: http://localhost:8501
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
 
-- Add authentication and JWT tokens
-
-- Integrate Google Calendar API
-
-- Add OCR for document extraction
-
-- Create multi-agent orchestration system
-
-- Deploy via Docker + CI/CD
 
 ## 🧍‍♀️ Author
 

@@ -7,11 +7,17 @@ from loguru import logger
 import time
 import sys
 
-from app.config import settings, get_cors_origins
-from app.database import check_db_connection, init_db
+from backend.app.config import settings, get_cors_origins
+from backend.app.database import check_db_connection, init_db
+from backend.app.services.scheduler import start_scheduler, stop_scheduler
 
 # Import routers
-from app.routers import auth
+from backend.app.routers import auth
+from backend.app.routers import automation
+from backend.app.routers import document
+from backend.app.routers import tasks
+from backend.app.routers import plans
+
 
 # Configure logging
 logger.remove()  # Remove default handler
@@ -20,6 +26,9 @@ logger.add(
     format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> - <level>{message}</level>",
     level="INFO"
 )
+# Ensure logs directory exists before file logging
+import os
+os.makedirs("logs", exist_ok=True)
 logger.add(
     "logs/wizai.log",
     rotation="500 MB",
@@ -121,6 +130,14 @@ async def startup_event():
             logger.error(f"❌ Database initialization failed: {e}")
     else:
         logger.error("❌ Database connection failed!")
+
+        # Start background scheduler
+        try:
+            start_scheduler()
+            logger.info("✅ Background scheduler started")
+        except Exception as e:
+            logger.error(f"❌ Failed to start scheduler: {e}")
+
     
     logger.info("✅ WizAI API started successfully")
 
@@ -130,6 +147,8 @@ async def startup_event():
 async def shutdown_event():
     """Run on application shutdown"""
     logger.info("👋 Shutting down WizAI API...")
+    stop_scheduler()
+    logger.info("✅ Background scheduler stopped")
 
 
 # Health check endpoint
@@ -163,11 +182,32 @@ app.include_router(
     tags=["Authentication"]
 )
 
-# TODO: Add more routers as you build them
-# app.include_router(tasks.router, prefix="/api/tasks", tags=["Tasks"])
-# app.include_router(plans.router, prefix="/api/plans", tags=["Plans"])
+# Additional routers
+app.include_router(
+    automation.router,
+    prefix="/api/automation",
+    tags=["Automation"]
+)
+
+app.include_router(
+    document.router,
+    prefix="/api/documents",
+    tags=["Documents"]
+)
+
+app.include_router(
+    tasks.router,
+    prefix="/api/tasks",
+    tags=["Tasks"]
+)
+
+app.include_router(
+    plans.router,
+    prefix="/api/plans",
+    tags=["Plans"]
+)
+
 # app.include_router(chat.router, prefix="/api/chat", tags=["Chat"])
-# app.include_router(documents.router, prefix="/api/documents", tags=["Documents"])
 # app.include_router(calendar.router, prefix="/api/calendar", tags=["Calendar"])
 
 
@@ -181,3 +221,4 @@ if __name__ == "__main__":
         reload=True,  # Auto-reload on code changes (development only)
         log_level="info"
     )
+    
