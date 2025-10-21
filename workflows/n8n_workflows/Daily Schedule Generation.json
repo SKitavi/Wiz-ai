@@ -1,0 +1,155 @@
+{
+  "name": "Daily Schedule Generation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "=*/5 * * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        -64
+      ],
+      "id": "15ebb8c5-502d-401c-a67d-c09c7eeddc16",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, email, full_name \n     FROM users;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        48,
+        -64
+      ],
+      "id": "f4ce81fc-fadd-4f8e-afd9-3fe97c81b2cc",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "PHiGcGBXpEG1CwoF",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/api/plans/generate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "date",
+              "value": "2025-10-21"
+            },
+            {
+              "name": "user_id",
+              "value": "sharon"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        272,
+        -64
+      ],
+      "id": "07984fac-82d1-4ece-9ada-07ad19fad4f5",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "sendTo": "=sharonkmwikali@gmail.com",
+        "subject": "=📅 Your Schedule for {{ $now.format('MMMM DD') }}",
+        "message": "=     Good morning {{ $json.full_name }}!\n     \n     Here's your optimized schedule for today:\n     \n     {{ $node[\"HTTP Request\"].json.plan.schedule_summary }}\n     \n     📊 Productivity Score: {{ $node[\"HTTP Request\"].json.plan.productivity_score }}/100\n     \n     View full schedule: https://wizai.app/plans\n     \n     Have a productive day!\n     - WizAI",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        528,
+        -64
+      ],
+      "id": "65abee0b-ee1d-4ef7-b4da-3eca64e8de0a",
+      "name": "Send a message",
+      "webhookId": "a13c5ada-798e-496a-83bb-1a8521b32aa0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "e0hKyElGQ7xpXqp4",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d2d733e2-4b18-4f78-af91-2a2fbdff2118",
+  "meta": {
+    "instanceId": "7421a9658b4e4166354bc2349a0ecc5830f7fef469b2e0c45195eee4f413eeca"
+  },
+  "id": "7HeX92W76TvpMETe",
+  "tags": []
+}

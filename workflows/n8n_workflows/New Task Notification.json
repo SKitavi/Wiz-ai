@@ -1,0 +1,207 @@
+{
+  "name": "New Task Notification",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-task",
+        "responseMode": "lastNode",
+        "options": {
+          "responseContentType": "=Webhook received successfully!\n"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        -48
+      ],
+      "id": "2af44498-627d-4117-b590-a23d9656f55c",
+      "name": "Webhook",
+      "webhookId": "758f8f9d-a424-4c61-99a7-da703750d716"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "sharonkmwikali@gmail.com",
+          "mode": "list",
+          "cachedResultName": "sharonkmwikali@gmail.com"
+        },
+        "start": "={{$json[\"body\"][\"task\"][\"deadline\"]}}",
+        "end": "={{$moment($json[\"body\"][\"task\"][\"deadline\"]).add(1,'hour').toISOString()}}",
+        "additionalFields": {
+          "description": "=Task created for {{$json[\"body\"][\"task\"][\"course\"]}} — created by {{$json[\"body\"][\"user_email\"]}}",
+          "summary": "={{$json[\"body\"][\"task\"][\"title\"]}}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        -64
+      ],
+      "id": "4e1694ab-bfe3-455c-af80-5ec689013bd3",
+      "name": "Create an event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "bszQyVDArDWiyNrB",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "032d8f31-4d20-4dbb-af25-1946d6164629",
+              "leftValue": "={{ $json.task.priority }}",
+              "rightValue": "high",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        192,
+        -48
+      ],
+      "id": "d1288a84-5056-4eb8-b19e-9bd1e4ac61c6",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE tasks \n  SET status = 'IN_PROGRESS',     \n      updated_at = NOW()\n  WHERE id = {{ $('Webhook').item.json.task.id}}\n  RETURNING *;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        912,
+        -64
+      ],
+      "id": "050647a9-3787-47ac-96a7-37a32aff4db0",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "PHiGcGBXpEG1CwoF",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.user_email }}",
+        "subject": "=🔥 High Priority Task: {{ $json.task.title }}",
+        "emailType": "text",
+        "message": "=Hi {{ $json.user_email }},\nYou have a new high-priority task:\n📌 Title: {{ $json.task.title }}\n📚 Course: {{ $json.task.course }}\n⏰ Deadline: {{ $json.task.deadline }}\n\nDon't forget to plan time for this!\n\n- WizAI",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        -64
+      ],
+      "id": "a17739df-bb2f-49a6-914d-dc640dbc3690",
+      "name": "Send a message",
+      "webhookId": "4a029a4a-1e72-47fa-8020-1504e5e912ad",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "e0hKyElGQ7xpXqp4",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "user_id": 1,
+          "user_email": "sharonkmwikali@gmail.com",
+          "task": {
+            "id": 1,
+            "title": "Complete C++ Homework",
+            "priority": "high",
+            "deadline": "2025-10-22T10:00:00Z",
+            "course": "Programming"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f30a2249-887c-4de6-a18d-136e9b4854d4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7421a9658b4e4166354bc2349a0ecc5830f7fef469b2e0c45195eee4f413eeca"
+  },
+  "id": "JWzXKqcHm3Akpzpv",
+  "tags": []
+}

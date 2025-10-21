@@ -1,0 +1,220 @@
+{
+  "name": "Deadline Reminder",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 3
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d6103857-4757-40cc-af66-ae6615c7b82d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n       t.id, t.title, t.deadline, t.priority, t.course,\n       u.email, u.full_name\n     FROM tasks t\n     JOIN users u ON t.user_id = u.id\n     WHERE t.deadline <= NOW() + INTERVAL '24 hours'\n       AND t.deadline >= NOW()\n       AND t.status != 'COMPLETED'\n     ORDER BY t.deadline ASC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        0
+      ],
+      "id": "99186b64-d521-4e9b-ae02-d28fbce83ec9",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "PHiGcGBXpEG1CwoF",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6dae70d4-2092-456a-86e2-07c479f14c5d",
+              "leftValue": "={{ $json.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "fab0d7bf-c9e7-4077-a20a-d3f513357195",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        688,
+        -64
+      ],
+      "id": "16d76df3-3737-47c6-989d-2561fc1918b4",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/api/chat",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={\"Generate a short motivational message for this task: {{ $json.title }} due {{ $json.deadline }}. Keep it under 50 words and encouraging.\"      }"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        -80
+      ],
+      "id": "f228a372-a54e-4c83-949b-9ba066d5f11c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "sendTo": "sharonkmwikali@gmail.com",
+        "subject": "=⏰ Reminder: {{ $json.title }} due soon!",
+        "message": "=     Hi {{ $json.full_name }},\n     \n     Your task \"{{ $json.title }}\" is due in less than 24 hours!\n     \n     ⏰ Deadline: {{ $json.deadline }}\n     📚 Course: {{ $json.course }}\n     🔥 Priority: {{ $json.priority }}\n     \n     {{ $node[\"HTTP Request\"].json.response }}\n     \n     You've got this! 💪\n     \n     - WizAI",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1104,
+        -80
+      ],
+      "id": "72f4296f-c058-4084-bb5d-add70d716810",
+      "name": "Send a message",
+      "webhookId": "e86f4954-ba71-4b09-a21b-49f83158e5c0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "e0hKyElGQ7xpXqp4",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "24bb77c3-3949-4eaa-bef1-ff464f486314",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7421a9658b4e4166354bc2349a0ecc5830f7fef469b2e0c45195eee4f413eeca"
+  },
+  "id": "q57SlXDikQa2vMqJ",
+  "tags": []
+}
