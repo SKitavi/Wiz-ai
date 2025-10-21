@@ -28,9 +28,7 @@ services:
       
       # Webhook URL (for external services to reach n8n)
       - WEBHOOK_URL=http://localhost:5678/
-      
-      # Database (using SQLite by default, can switch to PostgreSQL)
-      - DB_TYPE=sqlite
+      - DATABASE_URL=postgresql://sharonkitavi:postgres@postgres:5432/wizai
       
       # Logging
       - N8N_LOG_LEVEL=info
@@ -52,19 +50,30 @@ networks:
   wizai-network:
     driver: bridge
 
-# Optional: Add PostgreSQL for n8n if you want (comment out DB_TYPE=sqlite above)
-# postgres-n8n:
-#   image: postgres:14-alpine
-#   container_name: wizai-n8n-db
-#   restart: unless-stopped
-#   environment:
-#     - POSTGRES_USER=n8n
-#     - POSTGRES_PASSWORD=n8n_password
-#     - POSTGRES_DB=n8n
-#   volumes:
-#     - n8n_postgres_data:/var/lib/postgresql/data
-#   networks:
-#     - wizai-network
-#
-# volumes:
-#   n8n_postgres_data:
+postgres-n8n:
+  image: postgres:14-alpine
+  container_name: wizai-n8n-db
+  restart: unless-stopped
+  environment:
+    - POSTGRES_USER=sharonkitavi
+    - POSTGRES_PASSWORD=
+    - POSTGRES_DB=wizai
+  volumes:
+    - n8n_postgres_data:/var/lib/postgresql/data
+  networks:
+    - wizai-network
+
+  backend:
+    build:
+      context: ./backend
+    container_name: wizai-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"  # FastAPI accessible at http://localhost:8000
+    environment:
+      - DATABASE_URL=postgresql://sharonkitavi:postgres@postgres:5432/wizai
+      - N8N_WEBHOOK_URL=http://n8n:5678/webhook/new-task
+    depends_on:
+      - n8n
+    networks:
+      - wizai-network
