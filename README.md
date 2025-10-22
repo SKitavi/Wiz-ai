@@ -84,18 +84,42 @@ Manual organization is **time-consuming** and **error-prone**.
 ## 📂 Project Structure
 ```python 
 wizai/
-├── backend/
-│ └── app/
-│ ├── main.py
-│ ├── models/
-│ ├── routers/
-│ ├── schemas/
-│ ├── core/
-│ └── utils/
-├── venv/
-├── .env.example
-├── .gitignore
-└── README.md
+├── backend/                  # FastAPI backend
+│   ├── app/                  # Core application (routes, models, config, database)
+│   ├── tests/                # Unit and integration tests
+│   ├── logs/                 # Application logs
+│   └── chroma_db/            # Vector database or embeddings storage
+
+├── frontend/                 # Frontend application (e.g., React or Streamlit UI)
+
+├── workflows/                # Automation and orchestration workflows
+│   └── n8n_workflows/        # n8n workflow definitions
+
+├── n8n_data/                 # n8n runtime and configuration data
+│   ├── binaryData/           # Stored files used in workflows
+│   ├── nodes/                # Custom or community nodes
+│   ├── ssh/                  # SSH keys and credentials
+│   ├── git/                  # Git integration metadata
+
+├── docs/                     # Documentation and guides
+
+├── assets/                   # Images, screenshots, and static files for README or docs
+
+├── venv/                     # Python virtual environment
+│   ├── bin/
+│   ├── include/
+│   ├── lib/
+│   └── share/
+
+├── .git/                     # Git version control metadata
+│   ├── hooks/
+│   ├── logs/
+│   ├── objects/
+│   ├── refs/
+│   └── info/
+
+├── .env                      # Local environment variables (excluded from git)
+└── .env.example              # Template for environment variables (shared safely)
 ```
 
 ---
